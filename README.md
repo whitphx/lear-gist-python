@@ -1,7 +1,7 @@
 # lear-gist-python
 Python library to extract [A. Torralba's GIST descriptor](http://people.csail.mit.edu/torralba/code/spatialenvelope/).
 
-This is just a wrapper of [Lear's GIST implementation](http://lear.inrialpes.fr/software) written in C.
+This is just a wrapper for [Lear's GIST implementation](http://lear.inrialpes.fr/software) written in C.
 
 ## How to build and install
 
@@ -17,7 +17,7 @@ sh download-lear.sh
 Build and install
 ```shell
 python setup.py build_ext
-python install
+python setup.py install
 ```
 
 If `fftw3f` is installed in non-standard path (for example, `$HOME/local`),
