@@ -5,10 +5,9 @@ from distutils.command import build_ext
 
 gistmodule = Extension(
 	'gist',
-	sources=['gistmodule.c'],
+	sources=['lear_gist-1.2/gist.c', 'lear_gist-1.2/standalone_image.c', 'gistmodule.c'],
+	extra_compile_args=['-DUSE_GIST', '-DSTANDALONE_GIST'],
 	include_dirs=[numpy.get_include()],
-	extra_objects=['lear_gist-1.2/gist.o', 'lear_gist-1.2/standalone_image.o'],
-	library_dirs=['/Users/tsuchiya/local/lib'],
 	libraries=['fftw3f'])
 
 setup(name='gist',
