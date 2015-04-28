@@ -23,7 +23,7 @@ python setup.py install
 If `fftw3f` is installed in non-standard path (for example, `$HOME/local`),
 use `-I` and `-L` options:
 ```shell
-python setup.py build_ext -I $HOME/local/include -L $HOME/local/lib
+$ python setup.py build_ext -I $HOME/local/include -L $HOME/local/lib
 ```
 
 ## Usage
@@ -33,4 +33,15 @@ import numpy as np
 
 img = ... # numpy array containing an image
 descriptor = gist.extract(img)
+```
+
+## Scene classification sample
+This sample uses [8 Scene Categories Dataset](http://people.csail.mit.edu/torralba/code/spatialenvelope/).
+```shell
+cd sample
+sh download-8scene.sh
+# Extract GIST features from images in "spatial_envelope_256x256_static_8outdoorcategories" directory and save them into "features" directory
+python feature_extraction.py spatial_envelope_256x256_static_8outdoorcategories features
+# Train and test a multi-class linear classifier by features in "features" directory
+python scene_classification.py features
 ```
