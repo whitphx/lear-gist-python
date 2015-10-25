@@ -5,6 +5,17 @@
 
 #include "lear_gist-1.2/gist.h"
 
+struct module_state {
+    PyObject *error;
+};
+
+#if PY_MAJOR_VERSION >= 3
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
+#else
+#define GETSTATE(m) (&_state)
+static struct module_state _state;
+#endif
+
 static PyObject* gist_extract(PyObject *self, PyObject *args)
 {
 	int nblocks=4;
@@ -66,13 +77,67 @@ static PyObject* gist_extract(PyObject *self, PyObject *args)
 	return PyArray_Return(descriptor);
 }
 
-static PyMethodDef methods[] = {
+static PyMethodDef gist_methods[] = {
 	{"extract", gist_extract, METH_VARARGS, ""},
 	{NULL, NULL, 0, NULL}
 };
 
-PyMODINIT_FUNC initgist(void)
+#if PY_MAJOR_VERSION >= 3
+
+static int gist_traverse(PyObject *m, visitproc visit, void *arg) {
+    Py_VISIT(GETSTATE(m)->error);
+    return 0;
+}
+
+static int gist_clear(PyObject *m) {
+    Py_CLEAR(GETSTATE(m)->error);
+    return 0;
+}
+
+
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "gist",
+        NULL,
+        sizeof(struct module_state),
+        gist_methods,
+        NULL,
+        gist_traverse,
+        gist_clear,
+        NULL
+};
+
+#define INITERROR return NULL
+
+PyMODINIT_FUNC
+PyInit_gist(void)
+
+#else
+#define INITERROR return
+
+PyMODINIT_FUNC
+initgist(void)
+#endif
 {
-    (void)Py_InitModule("gist", methods);
+#if PY_MAJOR_VERSION >= 3
+    PyObject *module = PyModule_Create(&moduledef);
+#else
+    PyObject *module = Py_InitModule("gist", gist_methods);
+#endif
+
+    if (module == NULL)
+        INITERROR;
+    struct module_state *st = GETSTATE(module);
+
+    st->error = PyErr_NewException("gist.Error", NULL, NULL);
+    if (st->error == NULL) {
+        Py_DECREF(module);
+        INITERROR;
+    }
+
     import_array();
+
+#if PY_MAJOR_VERSION >= 3
+    return module;
+#endif
 }
