@@ -55,11 +55,12 @@ static PyObject* gist_extract(PyObject *self, PyObject *args)
 		}
 	}
 
+	// Extract descriptor
 	float *desc=color_gist_scaletab(im,nblocks,n_scale,orientations_per_scale);
 
 	int descsize=0;
 	/* compute descriptor size */
-	for(int i=0;i<n_scale;i++) 
+	for(int i=0;i<n_scale;i++)
 		descsize+=nblocks*nblocks*orientations_per_scale[i];
 
 	descsize*=3; /* color */
@@ -73,6 +74,10 @@ static PyObject* gist_extract(PyObject *self, PyObject *args)
 	for (int i=0 ; i<descsize ; ++i) {
 		*(float *)PyArray_GETPTR1(descriptor, i) = desc[i];
 	}
+
+	// Release memory
+	color_image_delete(im);
+	free(desc);
 
 	return PyArray_Return(descriptor);
 }
