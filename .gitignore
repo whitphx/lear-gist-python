@@ -3,3 +3,5 @@ lear_gist-1.2.tgz
 lear_gist-1.2
 *.o
 sample/spatial_envelope_256x256_static_8outdoorcategories*
+sample/features
+.python-version
