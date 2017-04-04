@@ -6,18 +6,37 @@ This is just a wrapper for [Lear's GIST implementation](http://lear.inrialpes.fr
 ## How to build and install
 
 ### Pre-requirements
+Following packages must be installed before building and installing `lear-gist-python`.
+
+##### numpy
+```shell
+$ pip install numpy
+```
+
+##### FFTW
 [FFTW](http://www.fftw.org/) is required to build lear_gist.
+Please download the source, then build and install like following. (Install guide is [here](http://www.fftw.org/fftw3_doc/Installation-on-Unix.html). Please refer for defail.)
+Make sure `--enable-single` and `--enable-shared` options are set to `./configure`.
+```shell
+$ ./configure --enable-single --enable-shared
+$ make
+$ make install
+```
+
+Because:
+- lear-gist requires *float version* FFTW to work with (`--enable-single`).
+- lear-gist-python requires FFTW to be compiled with `-fPIC` option (`--enable-shared`).
 
 ### Build and install
 Download lear_gist
 ```shell
-sh download-lear.sh
+$ sh download-lear.sh
 ```
 
 Build and install
 ```shell
-python setup.py build_ext
-python setup.py install
+$ python setup.py build_ext
+$ python setup.py install
 ```
 
 If `fftw3f` is installed in non-standard path (for example, `$HOME/local`),
@@ -37,6 +56,12 @@ descriptor = gist.extract(img)
 
 ## Scene classification sample
 This sample uses [8 Scene Categories Dataset](http://people.csail.mit.edu/torralba/code/spatialenvelope/).
+
+`scikit-learn` and `scikit-image` are required.
+```shell
+$ pip install scikit-learn scikit-image
+```
+
 ```shell
 cd sample
 sh download-8scene.sh
