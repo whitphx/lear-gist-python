@@ -6,7 +6,7 @@
 #include "lear_gist-1.2/gist.h"
 
 struct module_state {
-    PyObject *error;
+	PyObject *error;
 };
 
 #if PY_MAJOR_VERSION >= 3
@@ -90,26 +90,26 @@ static PyMethodDef gist_methods[] = {
 #if PY_MAJOR_VERSION >= 3
 
 static int gist_traverse(PyObject *m, visitproc visit, void *arg) {
-    Py_VISIT(GETSTATE(m)->error);
-    return 0;
+	Py_VISIT(GETSTATE(m)->error);
+	return 0;
 }
 
 static int gist_clear(PyObject *m) {
-    Py_CLEAR(GETSTATE(m)->error);
-    return 0;
+	Py_CLEAR(GETSTATE(m)->error);
+	return 0;
 }
 
 
 static struct PyModuleDef moduledef = {
-        PyModuleDef_HEAD_INIT,
-        "gist",
-        NULL,
-        sizeof(struct module_state),
-        gist_methods,
-        NULL,
-        gist_traverse,
-        gist_clear,
-        NULL
+		PyModuleDef_HEAD_INIT,
+		"gist",
+		NULL,
+		sizeof(struct module_state),
+		gist_methods,
+		NULL,
+		gist_traverse,
+		gist_clear,
+		NULL
 };
 
 #define INITERROR return NULL
@@ -125,24 +125,24 @@ initgist(void)
 #endif
 {
 #if PY_MAJOR_VERSION >= 3
-    PyObject *module = PyModule_Create(&moduledef);
+	PyObject *module = PyModule_Create(&moduledef);
 #else
-    PyObject *module = Py_InitModule("gist", gist_methods);
+	PyObject *module = Py_InitModule("gist", gist_methods);
 #endif
 
-    if (module == NULL)
-        INITERROR;
-    struct module_state *st = GETSTATE(module);
+	if (module == NULL)
+		INITERROR;
+	struct module_state *st = GETSTATE(module);
 
-    st->error = PyErr_NewException("gist.Error", NULL, NULL);
-    if (st->error == NULL) {
-        Py_DECREF(module);
-        INITERROR;
-    }
+	st->error = PyErr_NewException("gist.Error", NULL, NULL);
+	if (st->error == NULL) {
+		Py_DECREF(module);
+		INITERROR;
+	}
 
-    import_array();
+	import_array();
 
 #if PY_MAJOR_VERSION >= 3
-    return module;
+	return module;
 #endif
 }
