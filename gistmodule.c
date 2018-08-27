@@ -23,7 +23,7 @@ static PyObject* gist_extract(PyObject *self, PyObject *args)
 	int orientations_per_scale[50]={8,8,4};
 	PyArrayObject *image, *descriptor;
 
-	if (!PyArg_ParseTuple(args, "O", &image))
+	if (!PyArg_ParseTuple(args, "O!", &PyArray_Type, &image))
 	{
 		return NULL;
 	}
