@@ -4,6 +4,9 @@ box:
 build:
   steps:
     - pip-install
+    - pip-install
+      name: Install testing libraries
+      requirements_file: test/requirements.txt
     - script:
       name: Download and install FFTW
       code: |
