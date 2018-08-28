@@ -1,6 +1,7 @@
 import unittest
 import os.path
 
+from parameterized import parameterized
 import numpy as np
 
 import gist
@@ -13,6 +14,21 @@ class FunctionalityTestCase(unittest.TestCase):
     def test_with_zero_array(self):
         black_image = np.zeros((480, 640, 3), dtype=np.uint8)
         gist.extract(black_image)
+
+    @parameterized.expand([
+        ((), ),
+        ((0, 0, 3), ),  # Both width and height are 0
+        ((0, 32, 3), ),  # Width is 0
+        ((32, 0, 3), ),  # Height is 0
+        ((32, 32, 0), ),  # Invalid color channels
+        ((32, 32, 1), ),  # Invalid color channels
+        ((32, 32, 2), ),  # Invalid color channels
+        ((32, 32, 4), ),  # Invalid color channels
+    ])
+    def test_with_invalid_size_array(self, shape):
+        arr = np.zeros(shape, dtype=np.uint8)
+        with self.assertRaises(ValueError):
+            gist.extract(arr)
 
     def test_with_None(self):
         with self.assertRaises(TypeError):
