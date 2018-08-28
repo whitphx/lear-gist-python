@@ -4,7 +4,7 @@ box:
 build:
   steps:
     - pip-install
-    - pip-install
+    - pip-install:
       name: Install testing libraries
       requirements_file: test/requirements.txt
     - script:
@@ -31,6 +31,9 @@ build-python2.7:
   box: python:2.7.15-jessie
   steps:
     - pip-install
+    - pip-install:
+      name: Install testing libraries
+      requirements_file: test/requirements.txt
     - script:
       name: Download and install FFTW
       code: |
