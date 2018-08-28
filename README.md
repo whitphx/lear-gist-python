@@ -1,7 +1,9 @@
 # lear-gist-python
+[![wercker status](https://app.wercker.com/status/5285318d112056b85e8f3643e8a4b9aa/s/master "wercker status")](https://app.wercker.com/project/byKey/5285318d112056b85e8f3643e8a4b9aa)
+
 Python library to extract [A. Torralba's GIST descriptor](http://people.csail.mit.edu/torralba/code/spatialenvelope/).
 
-This is just a wrapper for [Lear's GIST implementation](http://lear.inrialpes.fr/software) written in C. It supports both Python 2 and Python 3 and was tested under Python 2.7.10 and Python 3.4.3 on Linux.
+This is just a wrapper for [Lear's GIST implementation](http://lear.inrialpes.fr/software) written in C. It supports both Python 2 and Python 3 and was tested under Python 2.7.15 and Python 3.6.6 on Linux.
 
 ## How to build and install
 
