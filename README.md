@@ -30,7 +30,7 @@ Because:
 ### Build and install
 Download lear_gist
 ```shell
-$ sh download-lear.sh
+$ ./download-lear.sh
 ```
 
 Build and install
