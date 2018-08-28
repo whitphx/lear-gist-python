@@ -29,20 +29,29 @@ static PyObject* gist_extract(PyObject *self, PyObject *args)
 	}
 
 	if (PyArray_TYPE(image) != NPY_UINT8) {
-		PyErr_SetString(PyExc_TypeError, "type of image must be uint8");
+		PyErr_SetString(PyExc_ValueError, "type of image must be uint8");
 		return NULL;
 	}
 
 	if (PyArray_NDIM(image) != 3) {
-		PyErr_SetString(PyExc_TypeError, "dimensions of image must be 3.");
+		PyErr_SetString(PyExc_ValueError, "dimensions of image must be 3.");
 		return NULL;
 	}
 
 	npy_intp *dims_image = PyArray_DIMS(image);
 
-
 	const int w = (int) *(dims_image+1);
 	const int h = (int) *(dims_image);
+	const int channels = (int) *(dims_image+2);
+
+	if (w == 0 || h == 0) {
+		PyErr_SetString(PyExc_ValueError, "invalid image size.");
+		return NULL;
+	}
+	if (channels != 3) {
+		PyErr_SetString(PyExc_ValueError, "invalid color channels.");
+		return NULL;
+	}
 
 	// Read image to color_image_t structure
 	color_image_t *im=color_image_new(w,h);
