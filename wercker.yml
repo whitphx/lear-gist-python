@@ -1,7 +1,31 @@
 box:
-  id: python:3.6
+  id: python:3.6.6-jessie
 
 build:
+  steps:
+    - pip-install
+    - script:
+      name: Download and install FFTW
+      code: |
+        wget -O fftw-3.3.8.tar.gz  http://www.fftw.org/fftw-3.3.8.tar.gz
+        tar xf fftw-3.3.8.tar.gz
+        cd fftw-3.3.8
+        ./configure --enable-single --enable-shared
+        make
+        make install
+        ldconfig
+    - script:
+      name: Download lear_gist
+      code: ./download-lear.sh
+    - script:
+      name: Build lear-gist-python
+      code: python setup.py build_ext --inplace
+    - script:
+      name: Run tests
+      code: python test.py
+
+build-python2.7:
+  box: python:2.7.15-jessie
   steps:
     - pip-install
     - script:
