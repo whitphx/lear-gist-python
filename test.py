@@ -13,3 +13,7 @@ class GistTestCase(unittest.TestCase):
     def test_with_None(self):
         with self.assertRaises(TypeError):
             self.assertIsNone(gist.extract(None))
+
+
+if __name__ == '__main__':
+    unittest.main()
