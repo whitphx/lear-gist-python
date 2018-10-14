@@ -36,6 +36,9 @@ class FunctionalityTestCase(unittest.TestCase):
 
 
 class ValueTestCase(unittest.TestCase):
+    def load_npy(self, relpath):
+        return np.load(os.path.join(DATADIR, relpath))
+
     def load_reference(self, path):
         with open(path) as f:
             content = f.read()
@@ -44,11 +47,43 @@ class ValueTestCase(unittest.TestCase):
         return arr
 
     def test(self):
-        arr = np.load(os.path.join(DATADIR, 'scene.npy'))
+        arr = self.load_npy('scene.npy')
         result = gist.extract(arr)
 
         reference = self.load_reference(
             os.path.join(DATADIR, 'scene.no_arg.result'))
+        np.testing.assert_allclose(reference, result, rtol=1e-04, atol=1e-04)
+
+    def test_with_nblocks_2_as_positional_argument(self):
+        arr = self.load_npy('scene.npy')
+        result = gist.extract(arr, 2)
+
+        reference = self.load_reference(
+            os.path.join(DATADIR, 'scene.nblocks2.result'))
+        np.testing.assert_allclose(reference, result, rtol=1e-04, atol=1e-04)
+
+    def test_with_nblocks_4_as_positional_argument(self):
+        arr = self.load_npy('scene.npy')
+        result = gist.extract(arr, 4)
+
+        reference = self.load_reference(
+            os.path.join(DATADIR, 'scene.nblocks4.result'))
+        np.testing.assert_allclose(reference, result, rtol=1e-04, atol=1e-04)
+
+    def test_with_nblocks_2_as_keyword_argument(self):
+        arr = self.load_npy('scene.npy')
+        result = gist.extract(arr, nblocks=2)
+
+        reference = self.load_reference(
+            os.path.join(DATADIR, 'scene.nblocks2.result'))
+        np.testing.assert_allclose(reference, result, rtol=1e-04, atol=1e-04)
+
+    def test_with_nblocks_4_as_keyword_argument(self):
+        arr = self.load_npy('scene.npy')
+        result = gist.extract(arr, nblocks=4)
+
+        reference = self.load_reference(
+            os.path.join(DATADIR, 'scene.nblocks4.result'))
         np.testing.assert_allclose(reference, result, rtol=1e-04, atol=1e-04)
 
 

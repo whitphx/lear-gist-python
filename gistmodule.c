@@ -16,14 +16,16 @@ struct module_state {
 static struct module_state _state;
 #endif
 
-static PyObject* gist_extract(PyObject *self, PyObject *args)
+static PyObject* gist_extract(PyObject *self, PyObject *args, PyObject *keywds)
 {
 	int nblocks=4;
 	int n_scale=3;
 	int orientations_per_scale[50]={8,8,4};
 	PyArrayObject *image, *descriptor;
 
-	if (!PyArg_ParseTuple(args, "O!", &PyArray_Type, &image))
+	static char *kwlist[] = {"", "nblocks", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, keywds, "O!|i", kwlist,
+										&PyArray_Type, &image, &nblocks))
 	{
 		return NULL;
 	}
@@ -92,7 +94,7 @@ static PyObject* gist_extract(PyObject *self, PyObject *args)
 }
 
 static PyMethodDef gist_methods[] = {
-	{"extract", gist_extract, METH_VARARGS, ""},
+	{"extract", gist_extract, METH_VARARGS | METH_KEYWORDS, "Extracts Lear's GIST descriptor"},
 	{NULL, NULL, 0, NULL}
 };
 
