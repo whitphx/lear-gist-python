@@ -19,8 +19,8 @@ static struct module_state _state;
 static PyObject* gist_extract(PyObject *self, PyObject *args, PyObject *keywds)
 {
 	int nblocks=4;
-	int n_scale=3;
-	int orientations_per_scale[50]={8,8,4};
+	int n_scale_default=3;
+	int orientations_per_scale_default[3]={8,8,4};
 	PyArrayObject *image, *descriptor;
 
 	static char *kwlist[] = {"", "nblocks", NULL};
@@ -67,12 +67,12 @@ static PyObject* gist_extract(PyObject *self, PyObject *args, PyObject *keywds)
 	}
 
 	// Extract descriptor
-	float *desc=color_gist_scaletab(im,nblocks,n_scale,orientations_per_scale);
+	float *desc=color_gist_scaletab(im, nblocks, n_scale_default, orientations_per_scale_default);
 
 	int descsize=0;
 	/* compute descriptor size */
-	for(int i=0;i<n_scale;i++)
-		descsize+=nblocks*nblocks*orientations_per_scale[i];
+	for(int i=0;i<n_scale_default;i++)
+		descsize+=nblocks*nblocks*orientations_per_scale_default[i];
 
 	descsize*=3; /* color */
 
