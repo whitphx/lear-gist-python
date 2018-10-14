@@ -86,6 +86,22 @@ class ValueTestCase(unittest.TestCase):
             os.path.join(DATADIR, 'scene.nblocks4.result'))
         np.testing.assert_allclose(reference, result, rtol=1e-04, atol=1e-04)
 
+    def test_with_orientations_per_scale_4_4_4_as_keyword_argument(self):
+        arr = self.load_npy('scene.npy')
+        result = gist.extract(arr, orientations_per_scale=(4, 4, 4))
+
+        reference = self.load_reference(
+            os.path.join(DATADIR, 'scene.ops_4_4_4.result'))
+        np.testing.assert_allclose(reference, result, rtol=1e-04, atol=1e-04)
+
+    def test_with_orientations_per_scale_8_8_8_as_keyword_argument(self):
+        arr = self.load_npy('scene.npy')
+        result = gist.extract(arr, orientations_per_scale=(8, 8, 8))
+
+        reference = self.load_reference(
+            os.path.join(DATADIR, 'scene.ops_8_8_8.result'))
+        np.testing.assert_allclose(reference, result, rtol=1e-04, atol=1e-04)
+
 
 if __name__ == '__main__':
     unittest.main()

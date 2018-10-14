@@ -21,15 +21,19 @@ static PyObject* gist_extract(PyObject *self, PyObject *args, PyObject *keywds)
 	int nblocks=4;
 	int n_scale_default=3;
 	int orientations_per_scale_default[3]={8,8,4};
+	int n_scale;
+	int *orientations_per_scale = NULL;
 	PyArrayObject *image, *descriptor;
+	PyObject* pyobj_orientations_per_scale = NULL;
 
-	static char *kwlist[] = {"", "nblocks", NULL};
-	if (!PyArg_ParseTupleAndKeywords(args, keywds, "O!|i", kwlist,
-										&PyArray_Type, &image, &nblocks))
+	static char *kwlist[] = {"", "nblocks", "orientations_per_scale", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, keywds, "O!|iO", kwlist,
+										&PyArray_Type, &image, &nblocks, &pyobj_orientations_per_scale))
 	{
 		return NULL;
 	}
 
+	// Check validity of image argument
 	if (PyArray_TYPE(image) != NPY_UINT8) {
 		PyErr_SetString(PyExc_ValueError, "type of image must be uint8");
 		return NULL;
@@ -38,6 +42,46 @@ static PyObject* gist_extract(PyObject *self, PyObject *args, PyObject *keywds)
 	if (PyArray_NDIM(image) != 3) {
 		PyErr_SetString(PyExc_ValueError, "dimensions of image must be 3.");
 		return NULL;
+	}
+
+	// Parse orientations_per_scale argument
+	// Ref: https://www.oreilly.com/library/view/python-cookbook/0596001673/ch16s03.html
+	if (pyobj_orientations_per_scale != NULL) {
+		pyobj_orientations_per_scale = PySequence_Fast(pyobj_orientations_per_scale, "orientations_per_scale must be iterable");
+		if (!pyobj_orientations_per_scale) {
+			return NULL;
+		}
+
+		n_scale = PySequence_Fast_GET_SIZE(pyobj_orientations_per_scale);
+		orientations_per_scale = malloc(n_scale * sizeof(int));
+		if (!orientations_per_scale) {
+			Py_DECREF(pyobj_orientations_per_scale);
+			return PyErr_NoMemory();
+		}
+
+		for (int i = 0; i < n_scale; ++i) {
+			PyObject *long_item;
+			PyObject *item = PySequence_Fast_GET_ITEM(pyobj_orientations_per_scale, i);
+			if (!item) {
+				Py_DECREF(pyobj_orientations_per_scale);
+				free(orientations_per_scale);
+				return NULL;
+			}
+			long_item = PyNumber_Long(item);
+			if (!long_item) {
+				Py_DECREF(pyobj_orientations_per_scale);
+				free(orientations_per_scale);
+				PyErr_SetString(PyExc_TypeError, "all items of orientations_per_scale must be int");
+				return NULL;
+			}
+			orientations_per_scale[i] = (int) PyLong_AsLong(long_item);  // XXX: Down cast
+			Py_DECREF(long_item);
+		}
+
+		Py_DECREF(pyobj_orientations_per_scale);
+	} else {
+		n_scale = n_scale_default;
+		orientations_per_scale = orientations_per_scale_default;
 	}
 
 	npy_intp *dims_image = PyArray_DIMS(image);
@@ -67,15 +111,14 @@ static PyObject* gist_extract(PyObject *self, PyObject *args, PyObject *keywds)
 	}
 
 	// Extract descriptor
-	float *desc=color_gist_scaletab(im, nblocks, n_scale_default, orientations_per_scale_default);
+	float *desc=color_gist_scaletab(im, nblocks, n_scale, orientations_per_scale);
 
-	int descsize=0;
 	/* compute descriptor size */
-	for(int i=0;i<n_scale_default;i++)
-		descsize+=nblocks*nblocks*orientations_per_scale_default[i];
+	int descsize=0;
+	for(int i=0;i<n_scale;i++)
+		descsize+=nblocks*nblocks*orientations_per_scale[i];
 
 	descsize*=3; /* color */
-
 
 	// Allocate output
 	npy_intp dim_desc[1] = {descsize};
