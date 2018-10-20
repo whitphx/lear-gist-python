@@ -72,3 +72,9 @@ python feature_extraction.py spatial_envelope_256x256_static_8outdoorcategories 
 # Train and test a multi-class linear classifier by features in "features" directory
 python scene_classification.py features
 ```
+
+## API
+### `gist.extract(img, nblocks=4, orientations_per_scale=(8, 8, 4))`
+* `img`: A numpy array (an instance of `numpy.ndarray`) which contains an image and whose shape is `(height, width, 3)`.
+* `nblocks`: Use a grid of `nblocks * nblocks` cells.
+* `orientations_per_scale`: Use `len(orientations_per_scale)` scales and compute `orientations_per_scale[i]` orientations for i-th scale.
