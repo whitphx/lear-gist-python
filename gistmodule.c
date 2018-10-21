@@ -120,20 +120,19 @@ static PyObject* gist_extract(PyObject *self, PyObject *args, PyObject *keywds)
 
 	descsize*=3; /* color */
 
-	// Allocate output
+	// Create output
 	npy_intp dim_desc[1] = {descsize};
-	descriptor = (PyArrayObject *) PyArray_SimpleNew(1, dim_desc, NPY_FLOAT);
-
-	// Set val
-	for (int i=0 ; i<descsize ; ++i) {
-		*(float *)PyArray_GETPTR1(descriptor, i) = desc[i];
-	}
+	descriptor = (PyArrayObject *) PyArray_SimpleNewFromData(1, dim_desc, NPY_FLOAT, desc);
+	PyArray_ENABLEFLAGS(descriptor, NPY_ARRAY_OWNDATA);
 
 	// Release memory
 	color_image_delete(im);
-	free(desc);
+	if (pyobj_orientations_per_scale != NULL) {
+		free(orientations_per_scale);
+	}
 
-	return PyArray_Return(descriptor);
+	return descriptor;
+	//return PyArray_Return(descriptor);
 }
 
 static PyMethodDef gist_methods[] = {
