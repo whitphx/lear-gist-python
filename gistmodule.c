@@ -18,13 +18,13 @@ static struct module_state _state;
 
 static PyObject* gist_extract(PyObject *self, PyObject *args, PyObject *keywds)
 {
-	int nblocks=4;  // Default value of nblocks is 4
-	int n_scale;  // Default values of n_scale and orientations_per_scale are defined below
-	int *orientations_per_scale = NULL;
+	PyArrayObject *image;  // Python object to contain the given `image` argument.
+	PyObject* pyobj_orientations_per_scale = NULL;  // Python Object to contain the given `orientations_per_scale` argument.
+	int nblocks=4;  // An variable to contain the given `nblocks` argument, whose default value is 4
 
-	// Python objects to receive given arguments
-	PyArrayObject *image, *descriptor;
-	PyObject* pyobj_orientations_per_scale = NULL;
+	// n_scale and orientations_per_scale are parsed from pyobj_orientations_per_scale below.
+	int n_scale;
+	int *orientations_per_scale = NULL;
 
 	// Parse the given arguments
 	static char *kwlist[] = {"", "nblocks", "orientations_per_scale", NULL};
@@ -127,8 +127,8 @@ static PyObject* gist_extract(PyObject *self, PyObject *args, PyObject *keywds)
 
 	// Create output
 	npy_intp dim_desc[1] = {descsize};
-	descriptor = (PyArrayObject *) PyArray_SimpleNewFromData(1, dim_desc, NPY_FLOAT, desc);
-	PyArray_ENABLEFLAGS(descriptor, NPY_ARRAY_OWNDATA);
+	PyObject *descriptor = PyArray_SimpleNewFromData(1, dim_desc, NPY_FLOAT, desc);
+	PyArray_ENABLEFLAGS((PyArrayObject *)descriptor, NPY_ARRAY_OWNDATA);
 
 	// Release memory
 	color_image_delete(im);
