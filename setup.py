@@ -11,6 +11,6 @@ gistmodule = Extension(
     libraries=['fftw3f'])
 
 setup(name='gist',
-      version='0.4',
+      version='0.5',
       description='A wrapper package of lear_gist',
       ext_modules=[gistmodule])
