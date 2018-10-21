@@ -18,14 +18,15 @@ static struct module_state _state;
 
 static PyObject* gist_extract(PyObject *self, PyObject *args, PyObject *keywds)
 {
-	int nblocks=4;
-	int n_scale_default=3;
-	int orientations_per_scale_default[3]={8,8,4};
-	int n_scale;
+	int nblocks=4;  // Default value of nblocks is 4
+	int n_scale;  // Default values of n_scale and orientations_per_scale are defined below
 	int *orientations_per_scale = NULL;
+
+	// Python objects to receive given arguments
 	PyArrayObject *image, *descriptor;
 	PyObject* pyobj_orientations_per_scale = NULL;
 
+	// Parse the given arguments
 	static char *kwlist[] = {"", "nblocks", "orientations_per_scale", NULL};
 	if (!PyArg_ParseTupleAndKeywords(args, keywds, "O!|iO", kwlist,
 										&PyArray_Type, &image, &nblocks, &pyobj_orientations_per_scale))
@@ -80,8 +81,12 @@ static PyObject* gist_extract(PyObject *self, PyObject *args, PyObject *keywds)
 
 		Py_DECREF(pyobj_orientations_per_scale);
 	} else {
-		n_scale = n_scale_default;
-		orientations_per_scale = orientations_per_scale_default;
+		// Default values of n_scale and orientations_per_scale
+		n_scale = 3;
+		orientations_per_scale = malloc(n_scale * sizeof(int));
+		orientations_per_scale[0] = 8;
+		orientations_per_scale[1] = 8;
+		orientations_per_scale[2] = 4;
 	}
 
 	npy_intp *dims_image = PyArray_DIMS(image);
@@ -127,9 +132,7 @@ static PyObject* gist_extract(PyObject *self, PyObject *args, PyObject *keywds)
 
 	// Release memory
 	color_image_delete(im);
-	if (pyobj_orientations_per_scale != NULL) {
-		free(orientations_per_scale);
-	}
+	free(orientations_per_scale);
 
 	return descriptor;
 	//return PyArray_Return(descriptor);
