@@ -2,6 +2,7 @@ import unittest
 import os.path
 
 from parameterized import parameterized
+from memory_profiler import LineProfiler
 import numpy as np
 
 import gist
@@ -101,6 +102,35 @@ class ValueTestCase(unittest.TestCase):
         reference = self.load_reference(
             os.path.join(DATADIR, 'scene.ops_8_8_8.result'))
         np.testing.assert_allclose(reference, result, rtol=1e-04, atol=1e-04)
+
+
+class MemoryUsageTestCase(unittest.TestCase):
+    def load_npy(self, relpath):
+        return np.load(os.path.join(DATADIR, relpath))
+
+    def test(self):
+        def run(img):
+            gist.extract(img)
+            gist.extract(img)
+            gist.extract(img)
+            gist.extract(img)
+            gist.extract(img)
+
+        img = self.load_npy('scene_640.npy')
+        img_mb_as_float = img.shape[0] * img.shape[1] * img.shape[2] * 4 / 1024 / 1024
+
+        prof = LineProfiler()
+        run = prof(run)
+        run(img)
+
+        _, lines = list(prof.code_map.items())[0]
+        mem_list = [mem for lineo, mem in list(lines)]
+        mem_inc_list = [inc for inc, mem in mem_list[1:]]  # First line of `run` function is definition ("def run (img):")
+        mem_inc_list[1:]  # Ignore the first because it includes an overhead of loading module.
+
+        for mem_inc in mem_inc_list:
+            # Assert that at least the memory used for the loaded image is released.
+            self.assertTrue(mem_inc < img_mb_as_float)
 
 
 if __name__ == '__main__':
