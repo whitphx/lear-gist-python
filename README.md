@@ -1,7 +1,7 @@
 # lear-gist-python
 [![wercker status](https://app.wercker.com/status/5285318d112056b85e8f3643e8a4b9aa/s/master "wercker status")](https://app.wercker.com/project/byKey/5285318d112056b85e8f3643e8a4b9aa)
 
-<a href="https://www.buymeacoffee.com/tuttieee" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="217" height="60"></a>
+<a href="https://www.buymeacoffee.com/whitphx" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="217" height="60"></a>
 
 Python library to extract [A. Torralba's GIST descriptor](http://people.csail.mit.edu/torralba/code/spatialenvelope/).
 
